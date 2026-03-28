@@ -1,6 +1,5 @@
 package com.urlafilms.software;
 
-import com.urlafilms.database.*;
 import com.urlafilms.printer.Print;
 import com.urlafilms.ui.MainUi;
 
@@ -11,6 +10,13 @@ import com.urlafilms.ui.MainUi;
  */
 public class Software
 {
+    /**
+     * Initializes the project
+     * @param args Arguments set in the terminal once the code is ran
+     * @version 1.0
+     * @since 1.0
+     * @author Álvaro Fernández Barrero
+     */
     public static void main(String[] args)
     {
         MainUi ui = null;

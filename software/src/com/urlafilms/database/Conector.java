@@ -15,7 +15,7 @@ public class Conector
     // ATTRIBUTES
     // ---------------------------------------------------------
     
-    private static Conector conectorInstance = null;
+    private static Conector singletonInstance = null;
     
     private Connection connection = null;
     
@@ -37,12 +37,12 @@ public class Conector
      */
     public Conector() throws Exception
     {
-        if (Conector.conectorInstance != null)
+        if (Conector.singletonInstance != null)
         {
             throw new Exception("The class was already instantiated...");
         }
         
-        Conector.conectorInstance = this;
+        Conector.singletonInstance = this;
         this.connect();
     }
     
