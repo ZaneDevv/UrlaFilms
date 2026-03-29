@@ -1,6 +1,7 @@
 package com.urlafilms.ui;
 
 import com.urlafilms.printer.Print;
+import com.urlafilms.ui.Button;
 import java.awt.Color;
 import java.awt.Image;
 import javax.swing.ImageIcon;
@@ -64,10 +65,13 @@ public class MainUi
         extendedLogoLabel.setHorizontalAlignment(JLabel.CENTER);
         extendedLogoLabel.setVerticalAlignment(JLabel.TOP);
         
-        JButton registerMovie = new JButton();
-        registerMovie.setText("Registrar película");
+        Button registerMovie = new ButtonBuilder()
+                .setText("Registrar película")
+                .setCornerRadius(12)
+                .setGradient(0, 0, new Color(0xF0F0F0), 0, 1, new Color(0x959595))
+                .build();
         
-        JButton checkInfoMovie = new JButton();
+        Button checkInfoMovie = new Button(registerMovie);
         checkInfoMovie.setText("Obtener información");
 
         JFrame frame = new JFrame();
@@ -76,8 +80,9 @@ public class MainUi
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
         frame.setIconImage(logo.getImage());
-       
+
         this.setGradient(frame, 0, 0, new Color(0x1A1A20), 0.25, 1, new Color(0x101016));
+        
         frame.setVisible(true);
 
         frame.add(extendedLogoLabel);
