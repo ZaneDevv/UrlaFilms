@@ -1,26 +1,37 @@
 package com.urlafilms.ui;
 
 import com.urlafilms.printer.Print;
-import com.urlafilms.ui.Button;
+import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Image;
+import javax.swing.Box;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  * Generates the entire UI
- * @version 1.5
+ * @version 2.2
  * @author Álvaro Fernández Barrero
  */
 public class MainUi
 {
     // ---------------------------------------------------------
+    // CONSTANTA
+    // ---------------------------------------------------------
+    
+    final static int SCREEN_WIDTH = 600;
+    final static int SCREEN_HEIGHT = 600;
+    
+    // ---------------------------------------------------------
     // ATTRIBUTES
     // ---------------------------------------------------------
 
     private static MainUi singletonInstance = null;
+    
+    private ImageIcon logo = new ImageIcon("../img/logo.png");
 
     // ---------------------------------------------------------
     // CONSTRUCTORS
@@ -59,35 +70,64 @@ public class MainUi
      */
     private void generateUi()
     {
-        ImageIcon logo = new ImageIcon("../img/logo.png");
-
-        JLabel extendedLogoLabel = this.generateImage("../img/extendedLogo.png", 500, 300);
-        extendedLogoLabel.setHorizontalAlignment(JLabel.CENTER);
-        extendedLogoLabel.setVerticalAlignment(JLabel.TOP);
-        
-        Button registerMovie = new ButtonBuilder()
-                .setText("Registrar película")
-                .setCornerRadius(12)
-                .setGradient(0, 0, 0xF0F0F0, 0, 1, 0x959595)
-                .build();
-        
-        Button checkInfoMovie = new Button(registerMovie);
-        checkInfoMovie.setText("Obtener información");
-
         JFrame frame = new JFrame();
         frame.setTitle("Urla Films");
-        frame.setSize(600, 600);
+        frame.setSize(MainUi.SCREEN_WIDTH, MainUi.SCREEN_HEIGHT);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
         frame.setIconImage(logo.getImage());
 
         this.setGradient(frame, 0, 0, new Color(0x1A1A20), 0.25, 1, new Color(0x101016));
         
-        frame.setVisible(true);
+        CardLayout cardLayout = new CardLayout();
+        JPanel mainPanel = new JPanel(cardLayout);
+        mainPanel.setOpaque(false);
+        
+        mainPanel.add(this.generateHomeUi(), "HOME");
 
-        frame.add(extendedLogoLabel);
-        frame.add(registerMovie);
-        frame.add(checkInfoMovie);
+        frame.add(mainPanel);
+
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+    
+    /**
+     * Generates the home UI
+     * @version 2.0
+     * @since 1.0
+     * @author Álvaro Fernández Barrero
+     */
+    private JPanel generateHomeUi()
+    {
+        int extendedLogoWidth = MainUi.SCREEN_WIDTH - 50;
+        JLabel extendedLogoLabel = this.generateImage("../img/extendedLogo.png", extendedLogoWidth, extendedLogoWidth / 2);
+        extendedLogoLabel.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+
+        Button registerMovie = new ButtonBuilder()
+                .setText("Registrar película")
+                .setCornerRadius(12)
+                .setGradient(0, 0, 0xF0F0F0, 0, 1, 0x959595)
+                .build();
+
+        registerMovie.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+
+        Button checkInfoMovie = new Button(registerMovie);
+        checkInfoMovie.setText("Obtener información");
+        checkInfoMovie.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new javax.swing.BoxLayout(panel, javax.swing.BoxLayout.Y_AXIS));
+        panel.setOpaque(false);
+        
+        panel.add(Box.createVerticalGlue());
+        panel.add(extendedLogoLabel);
+        panel.add(Box.createRigidArea(new Dimension(0, 20)));
+        panel.add(registerMovie);
+        panel.add(Box.createRigidArea(new Dimension(0, 10)));
+        panel.add(checkInfoMovie);
+        panel.add(Box.createVerticalGlue());
+
+        return panel;
     }
 
     /**

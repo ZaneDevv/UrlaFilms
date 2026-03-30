@@ -1,7 +1,5 @@
 package com.urlafilms.ui;
 
-import com.urlafilms.ui.Button;
-import com.urlafilms.ui.Gradient;
 import java.awt.Color;
 
 /**

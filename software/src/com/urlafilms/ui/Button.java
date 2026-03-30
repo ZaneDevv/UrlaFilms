@@ -1,6 +1,5 @@
 package com.urlafilms.ui;
 
-import com.urlafilms.ui.Gradient;
 import javax.swing.JButton;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
