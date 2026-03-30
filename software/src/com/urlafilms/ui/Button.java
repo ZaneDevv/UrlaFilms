@@ -1,7 +1,7 @@
 package com.urlafilms.ui;
 
+import com.urlafilms.ui.Gradient;
 import javax.swing.JButton;
-import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -9,7 +9,7 @@ import java.awt.RenderingHints;
 
 /**
  * Custom button class
- * @version 3.0
+ * @version 3.1
  * @author Álvaro Fernández Barrero
  */
 public class Button extends JButton
@@ -20,13 +20,7 @@ public class Button extends JButton
     
     private int cornerRadius = 0;
     
-    private double originGradientX = 0;
-    private double originGradientY = 0;
-    private double endingGradientX = 0;
-    private double endingGradientY = 0;
-    
-    private Color colorGradientOrigin = new Color(0xFFFFFF);
-    private Color colorGradientEnding = new Color(0xFFFFFF);
+    private Gradient gradient;
     
     // ---------------------------------------------------------
     // CONSTRUCTORS
@@ -41,59 +35,41 @@ public class Button extends JButton
      */
     public Button(String text)
     {
-        super(text);
-        this.setDefaultParameters();
+        this(text, 0, new Gradient());
     }
     
     /**
      * Creates a new button with the given text and gradient's parameters
      * @param text Text to contain in the button
-     * @param originGradientX Origin horizontal point in percentage for the gradient
-     * @param originGradientY Origin vertical point in percentage for the gradient
-     * @param colorGradientOrigin The starting color in the gradient
-     * @param endingGradientX Ending horizontal point in percentage for the gradient
-     * @param endingGradientY Ending vertical point in percentage for the gradient
-     * @param colorGradientEnding The ending color in the gradient
+     * @param gradient Gradient instance
      * @version 1.2
      * @since 2.1
      * @author Álvaro Fernández Barrero
      */
-    public Button(
-            String text,
-            double originGradientX, double originGradientY, Color colorGradientOrigin, double endingGradientX, double endingGradientY, Color colorGradientEnding
-    )
+    public Button(String text, Gradient gradient)
     {
-        super(text);
-        
-        this.setGradient(originGradientX, originGradientY, colorGradientOrigin, endingGradientX, endingGradientY, colorGradientEnding);
-        this.setDefaultParameters();
+        this(text, 0, gradient);
     }
     
     /**
      * Creates a new button with the given text and gradient's parameters
      * @param text Text to contain in the button
      * @param cornerRadius The radius for the button's corners
-     * @param originGradientX Origin horizontal point in percentage for the gradient
-     * @param originGradientY Origin vertical point in percentage for the gradient
-     * @param colorGradientOrigin The starting color in the gradient
-     * @param endingGradientX Ending horizontal point in percentage for the gradient
-     * @param endingGradientY Ending vertical point in percentage for the gradient
-     * @param colorGradientEnding The ending color in the gradient
+     * @param gradient Gradient instance
      * @version 1.2
      * @since 2.0
      * @author Álvaro Fernández Barrero
      */
-    public Button(
-            String text, int cornerRadius,
-            double originGradientX, double originGradientY, Color colorGradientOrigin, double endingGradientX, double endingGradientY, Color colorGradientEnding
-    )
+    public Button(String text, int cornerRadius, Gradient gradient)
     {
         super(text);
         
         this.cornerRadius = cornerRadius;
+        this.gradient = gradient;
         
-        this.setGradient(originGradientX, originGradientY, colorGradientOrigin, endingGradientX, endingGradientY, colorGradientEnding);
-        this.setDefaultParameters();
+        this.setContentAreaFilled(false);
+        this.setOpaque(false);
+        this.setBorderPainted(false);
     }
     
     /**
@@ -105,32 +81,12 @@ public class Button extends JButton
      */
     public Button(Button button)
     {
-        super(button.getText());
-        
-        this.cornerRadius = button.getCornerRadius();
-        this.setGradient(
-                button.getOriginGradientX(), button.getOriginGradientY(), button.getColorGradientOrigin(),
-                button.getEndingGradientX(), button.getEndingGradientY(), button.getColorGradientEnding()
-        );
-        this.setDefaultParameters();
+        this(button.getText(), button.getCornerRadius(), button.getGradient());
     }
     
     // ---------------------------------------------------------
     // METHODS
     // ---------------------------------------------------------
-    
-    /**
-     * Set default button's parameters
-     * @version 1.0
-     * @since 2.3
-     * @author Álvaro Fernández Barrero
-     */
-    private void setDefaultParameters()
-    {
-        this.setContentAreaFilled(false);
-        this.setOpaque(false);
-        this.setBorderPainted(false);
-    }
     
     @Override
     protected void paintComponent(Graphics graphics) {
@@ -140,8 +96,8 @@ public class Button extends JButton
         int height = getHeight();
 
         GradientPaint gradient = new GradientPaint(
-            (int)(width * originGradientX), (int)(height * originGradientY), colorGradientOrigin,
-            (int)(width * endingGradientX), (int)(height * endingGradientY), colorGradientEnding
+            (int)(width * this.gradient.getOriginGradientX()), (int)(height * this.gradient.getOriginGradientY()), this.gradient.getColorGradientOrigin(),
+            (int)(width * this.gradient.getEndingGradientX()), (int)(height * this.gradient.getEndingGradientY()), this.gradient.getColorGradientEnding()
         );
 
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -158,28 +114,6 @@ public class Button extends JButton
     // ---------------------------------------------------------
     
     /**
-     * Sets the given gradient's parameters
-     * @param originGradientX Origin horizontal point in percentage for the gradient
-     * @param originGradientY Origin vertical point in percentage for the gradient
-     * @param colorGradientOrigin The starting color in the gradient
-     * @param endingGradientX Ending horizontal point in percentage for the gradient
-     * @param endingGradientY Ending vertical point in percentage for the gradient
-     * @param colorGradientEnding The ending color in the gradient
-     * @version 1.2
-     * @since 2.0
-     * @author Álvaro Fernández Barrero
-     */
-    private void setGradient(double originGradientX, double originGradientY, Color colorGradientOrigin, double endingGradientX, double endingGradientY, Color colorGradientEnding)
-    {
-        this.originGradientX = originGradientX;
-        this.originGradientY = originGradientY;
-        this.endingGradientX = endingGradientX;
-        this.endingGradientY = endingGradientY;
-        this.colorGradientOrigin = colorGradientOrigin;
-        this.colorGradientEnding = colorGradientEnding;
-    }
-    
-    /**
      * Gets the radius for the button's corners
      * @return The radius for the button's corners
      * @version 1.0
@@ -192,74 +126,14 @@ public class Button extends JButton
     }
     
     /**
-     * Gets the origin horizontal point in percentage for the gradient
-     * @return Origin horizontal point in percentage for the gradient
+     * Gets the button's gradient
+     * @return The button's gradient
      * @version 1.0
-     * @since 1.2
+     * @since 3.0
      * @author Álvaro Fernández Barrero
      */
-    public double getOriginGradientX()
+    public Gradient getGradient()
     {
-        return this.originGradientX;
-    }
-    
-    /**
-     * Gets the origin vertical point in percentage for the gradient
-     * @return Origin vertical point in percentage for the gradient
-     * @version 1.0
-     * @since 1.2
-     * @author Álvaro Fernández Barrero
-     */
-    public double getOriginGradientY()
-    {
-        return this.originGradientY;
-    }
-    
-    /**
-     * Gets the starting color in the gradient
-     * @return The starting color in the gradient
-     * @version 1.0
-     * @since 1.2
-     * @author Álvaro Fernández Barrero
-     */
-    public Color getColorGradientOrigin()
-    {
-        return this.colorGradientOrigin;
-    }
-    
-    /**
-     * Gets the ending horizontal point in percentage for the gradient
-     * @return Ending horizontal point in percentage for the gradient
-     * @version 1.0
-     * @since 1.2
-     * @author Álvaro Fernández Barrero
-     */
-    public double getEndingGradientX()
-    {
-        return this.endingGradientX;
-    }
-    
-    /**
-     * Gets the ending vertical point in percentage for the gradient
-     * @return Ending vertical point in percentage for the gradient
-     * @version 1.0
-     * @since 1.2
-     * @author Álvaro Fernández Barrero
-     */
-    public double getEndingGradientY()
-    {
-        return this.endingGradientY;
-    }
-    
-    /**
-     * Gets the ending color in the gradient
-     * @return The ending color in the gradient
-     * @version 1.0
-     * @since 1.2
-     * @author Álvaro Fernández Barrero
-     */
-    public Color getColorGradientEnding()
-    {
-        return this.colorGradientEnding;
+        return this.gradient;
     }
 }

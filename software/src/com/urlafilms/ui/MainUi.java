@@ -68,7 +68,7 @@ public class MainUi
         Button registerMovie = new ButtonBuilder()
                 .setText("Registrar película")
                 .setCornerRadius(12)
-                .setGradient(0, 0, new Color(0xF0F0F0), 0, 1, new Color(0x959595))
+                .setGradient(0, 0, 0xF0F0F0, 0, 1, 0x959595)
                 .build();
         
         Button checkInfoMovie = new Button(registerMovie);
