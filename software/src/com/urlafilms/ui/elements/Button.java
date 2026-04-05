@@ -1,5 +1,6 @@
-package com.urlafilms.ui;
+package com.urlafilms.ui.elements;
 
+import com.urlafilms.ui.Gradient;
 import javax.swing.JButton;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
@@ -41,6 +42,7 @@ public class Button extends JButton
      * Creates a new button with the given text and gradient's parameters
      * @param text Text to contain in the button
      * @param gradient Gradient instance
+     * @see Gradient
      * @version 1.2
      * @since 2.1
      * @author Álvaro Fernández Barrero
@@ -55,6 +57,7 @@ public class Button extends JButton
      * @param text Text to contain in the button
      * @param cornerRadius The radius for the button's corners
      * @param gradient Gradient instance
+     * @see Gradient
      * @version 1.2
      * @since 2.0
      * @author Álvaro Fernández Barrero

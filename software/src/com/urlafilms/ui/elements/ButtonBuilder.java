@@ -1,5 +1,6 @@
-package com.urlafilms.ui;
+package com.urlafilms.ui.elements;
 
+import com.urlafilms.ui.Gradient;
 import java.awt.Color;
 
 /**
@@ -55,6 +56,7 @@ public class ButtonBuilder
      * 
      * @param gradient The gradient
      * @return The ButtonBuilder's instance
+     * @see Gradient
      * @version 1.0
      * @since 1.3
      * @author Álvaro Fernández Barrero

@@ -1,5 +1,6 @@
 package com.urlafilms.software;
 
+import com.urlafilms.database.Conector;
 import com.urlafilms.printer.Print;
 import com.urlafilms.ui.MainUi;
 
@@ -18,12 +19,11 @@ public class Software
      * @author Álvaro Fernández Barrero
      */
     public static void main(String[] args)
-    {
-        MainUi ui = null;
-        
+    {        
         try
         {
-            ui = new MainUi();
+            new Conector();
+            new MainUi();
         }
         catch (Exception exception)
         {

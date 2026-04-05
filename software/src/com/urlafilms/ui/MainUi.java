@@ -22,6 +22,9 @@ public class MainUi
     public final static int SCREEN_WIDTH = 600;
     public final static int SCREEN_HEIGHT = 600;
     
+    private static final Color ORIGIN_GRADIENT_COLOR = new Color(0x1A1A20);
+    private static final Color ENDING_GRADIENT_COLOR = new Color(0x101016);
+    
     // ---------------------------------------------------------
     // ATTRIBUTES
     // ---------------------------------------------------------
@@ -62,11 +65,12 @@ public class MainUi
 
     /**
      * Generates the UI
+     * @throws UI could not be created
      * @version 1.0
      * @since 1.0
      * @author Álvaro Fernández Barrero
      */
-    private void generateUi()
+    private void generateUi() throws Exception
     {
         MainUi.frame = new JFrame();
         MainUi.frame.setTitle("Urla Films");
@@ -75,7 +79,7 @@ public class MainUi
         MainUi.frame.setResizable(false);
         MainUi.frame.setIconImage(favicon.getImage());
 
-        this.setGradient(MainUi.frame, 0, 0, new Color(0x1A1A20), 0.25, 1, new Color(0x101016));
+        this.setGradient(MainUi.frame, 0, 0, MainUi.ORIGIN_GRADIENT_COLOR, 0.25, 1, ENDING_GRADIENT_COLOR);
         
         CardLayout cardLayout = new CardLayout();
         JPanel mainPanel = new JPanel(cardLayout);
@@ -83,7 +87,8 @@ public class MainUi
 
         MainUi.frame.add(mainPanel);
         
-        new MainPage();
+        //new MainPage();
+        new CheckInfoPage();
 
         MainUi.frame.setLocationRelativeTo(null);
         MainUi.frame.setVisible(true);

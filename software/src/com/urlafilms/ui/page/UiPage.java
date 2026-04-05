@@ -23,7 +23,7 @@ public abstract class UiPage
     
     protected boolean isActive = false;
     protected JPanel panel = null;
-    
+        
     // ---------------------------------------------------------
     // CONSTRUCTORS
     // ---------------------------------------------------------
@@ -40,6 +40,8 @@ public abstract class UiPage
         
         this.pageIndex = UiPage.pagesAmount;
         this.generateUi();
+        
+        this.desactivate();
     }
     
     // ---------------------------------------------------------

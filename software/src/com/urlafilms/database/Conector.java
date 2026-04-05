@@ -3,10 +3,12 @@ package com.urlafilms.database;
 import com.urlafilms.printer.Print;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Generates a connection between the project and the database in order to either alter it or obtain information from it
- * @version 1.2
+ * @version 2.1
  * @author Álvaro Fernández Barrero
  */
 public class Conector
@@ -14,10 +16,8 @@ public class Conector
     // ---------------------------------------------------------
     // ATTRIBUTES
     // ---------------------------------------------------------
-    
-    private static Conector singletonInstance = null;
-    
-    private Connection connection = null;
+        
+    static Connection connection = null;
     
     private String driverClass = "oracle.jdbc.OracleDriver";
     private String url = "jdbc:oracle:thin:@localhost:1521:XE";
@@ -37,12 +37,11 @@ public class Conector
      */
     public Conector() throws Exception
     {
-        if (Conector.singletonInstance != null)
+        if (Conector.connection != null)
         {
             throw new Exception("The class was already instantiated...");
         }
         
-        Conector.singletonInstance = this;
         this.connect();
     }
     
@@ -58,7 +57,7 @@ public class Conector
      */
     void connect()
     {
-        if (this.connection != null)
+        if (Conector.connection != null)
         {
             Print.warnln("You should not connect a connection that is already done!");
             return;
@@ -67,7 +66,7 @@ public class Conector
         try
         {
             Class.forName(this.driverClass);
-            this.connection = DriverManager.getConnection(this.url, this.user, this.password);
+            Conector.connection = DriverManager.getConnection(this.url, this.user, this.password);
             
             Print.successln("Connection has been made correctly!");
         }
@@ -85,7 +84,7 @@ public class Conector
      */
     void disconnect()
     {
-        if (this.connection == null)
+        if (Conector.connection == null)
         {
             Print.warnln("Cannot disconnect a connection that does not exist!");
             return;
@@ -93,12 +92,25 @@ public class Conector
         
         try
         {
-            this.connection.close();
+            Conector.connection.close();
             Print.successln("The connection has been removed correctly!");
         }
         catch (Exception exception)
         {
             Print.errorln("Cannot disconnect from the database! Error: " + exception.getMessage());
         }
+    }
+    
+    /**
+     * Executes the given SQL query offering information from it
+     * @param query SQL query to run
+     * @return The query's result
+     * @throws SQLException 
+     * @version 1.2
+     * @since 2.5
+     */
+    static ResultSet executeQuery(String query) throws SQLException
+    {
+        return Conector.connection.prepareStatement(query).executeQuery();
     }
 }

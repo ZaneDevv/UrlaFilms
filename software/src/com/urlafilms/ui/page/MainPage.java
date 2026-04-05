@@ -1,7 +1,7 @@
 package com.urlafilms.ui.page;
 
-import com.urlafilms.ui.Button;
-import com.urlafilms.ui.ButtonBuilder;
+import com.urlafilms.ui.elements.Button;
+import com.urlafilms.ui.elements.ButtonBuilder;
 import com.urlafilms.ui.MainUi;
 import java.awt.Dimension;
 import javax.swing.Box;
@@ -14,6 +14,27 @@ import javax.swing.JLabel;
  */
 public class MainPage extends UiPage
 {
+    // ---------------------------------------------------------
+    // ATTRIBUTES
+    // ---------------------------------------------------------
+    
+    private static MainPage singletonPage = null;
+    
+    // ---------------------------------------------------------
+    // CONSTRUCTORS
+    // ---------------------------------------------------------
+    
+    public MainPage() throws Exception
+    {
+        if (MainPage.singletonPage != null)
+        {
+            throw new Exception("Main page was already created!");
+        }
+        
+        super();
+        MainPage.singletonPage = this;
+    }
+    
     // ---------------------------------------------------------
     // METHODS
     // ---------------------------------------------------------
