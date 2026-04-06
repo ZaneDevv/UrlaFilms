@@ -35,7 +35,7 @@ IDENTIFIED BY system1234;
 GRANT CONNECT, RESOURCE, DBA TO system;
 ```
 
-Dentro de este user, podremos crear la base de datos, la cual se encuentra en [`Tables.sql`](./database/Tables.sql). En caso de ser necesitado, en el archivo [`TestingInserts.sql`](./database/TestingInserts.sql) se encuentran ciertas queries inserts para poder probar todo.
+Dentro de este user, podremos crear la base de datos, la cual se encuentra en [`Tables.sql`](./database/codes/Tables.sql). En caso de ser necesitado, en el archivo [`TestingInserts.sql`](./database/codes/TestingInserts.sql) se encuentran ciertas queries inserts para poder probar todo.
 
 A continuación, hace falta crear un proyecto **Ant** en *NetBeans* y, dentro de este, crear la conexión con la base de datos que acabamos de implementar en nuestro sistema. Dirigiéndonos al apartado *Services* encontramos una opción *Database* la cual nos permitirá con clic derecho crear esta conexión. Nos aseguraremos que el driver sea **Oracle Thin** y, en agregar, agregaremos el fichero `C:/oraclexe/app/oracle/product/<version>/server/jdbc/lib/ojdbc6.jar`.
 
