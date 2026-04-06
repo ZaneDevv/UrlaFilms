@@ -43,7 +43,7 @@ public class TextLabel extends JLabel
      */
     public TextLabel(String text)
     {
-        this(text, DEFAULT_TEXT_COLOR);
+        this(text, TextLabel.DEFAULT_TEXT_COLOR);
     }
     
     /**
@@ -77,66 +77,6 @@ public class TextLabel extends JLabel
     }
     
     /**
-     * Creates a new text label with the given parameters
-     * @param text Text to contain in the text label
-     * @param textColor Color to set to the text
-     * @param font Font to apply to the text
-     * @version 1.0
-     * @since 2.0
-     * @author Álvaro Fernández Barrero
-     */
-    public TextLabel(String text, Color textColor, String font)
-    {
-        this(text, textColor, new Font(font, Font.PLAIN, 14));
-    }
-    
-    /**
-     * Creates a new text label with the given parameters
-     * @param text Text to contain in the text label
-     * @param textColor Color to set to the text
-     * @param textWeight Text weight
-     * @see TextWeight
-     * @version 1.0
-     * @since 2.0
-     * @author Álvaro Fernández Barrero
-     */
-    public TextLabel(String text, Color textColor, TextWeight textWeight)
-    {
-        this(text, textColor, new Font("SansSerif", TextLabel.convertTextWeightToNumber(textWeight), 14));
-    }
-    
-    /**
-     * Creates a new text label with the given parameters
-     * @param text Text to contain in the text label
-     * @param textColor Color to set to the text
-     * @param textSize Text size
-     * @version 1.0
-     * @since 2.0
-     * @author Álvaro Fernández Barrero
-     */
-    public TextLabel(String text, Color textColor, int textSize)
-    {
-        this(text, textColor, new Font("SansSerif", Font.PLAIN, textSize));
-    }
-    
-    /**
-     * Creates a new text label with the given parameters
-     * @param text Text to contain in the text label
-     * @param textColor Color to set to the text
-     * @param font Font to apply to the text
-     * @param textWeight Text weight
-     * @param textSize Text size
-     * @see TextWeight
-     * @version 1.0
-     * @since 2.0
-     * @author Álvaro Fernández Barrero
-     */
-    public TextLabel(String text, Color textColor, String font, TextWeight textWeight, int textSize)
-    {
-        this(text, textColor, new Font(font, TextLabel.convertTextWeightToNumber(textWeight), textSize));
-    }
-    
-    /**
      * Copies the given textLabel
      * @param textLabel Text label to copy
      * @version 1.0
@@ -146,23 +86,6 @@ public class TextLabel extends JLabel
     public TextLabel(TextLabel textLabel)
     {
         this(textLabel.getText(), textLabel.getTextColor());
-    }
-    
-    // ---------------------------------------------------------
-    // METHODS
-    // ---------------------------------------------------------
-    
-    /**
-     * Converts the text weight to a normal number in order to make it accessible for swing
-     * @param textWeight Text weight to convert
-     * @return Text weight converted to number
-     * @version 1.0
-     * @since 2.0
-     * @author Álvaro Fernández Barrero
-     */
-    private static int convertTextWeightToNumber(TextWeight textWeight)
-    {
-        return textWeight == TextWeight.Bold ? Font.BOLD : textWeight == TextWeight.Normal ? Font.PLAIN : Font.ITALIC;
     }
     
     // ---------------------------------------------------------

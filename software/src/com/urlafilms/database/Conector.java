@@ -3,8 +3,6 @@ package com.urlafilms.database;
 import com.urlafilms.printer.Print;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * Generates a connection between the project and the database in order to either alter it or obtain information from it
@@ -39,7 +37,7 @@ public class Conector
     {
         if (Conector.connection != null)
         {
-            throw new Exception("The class was already instantiated...");
+            throw new Exception("The class was already instantiated, therefore, the connection was already made...");
         }
         
         this.connect();
@@ -63,6 +61,8 @@ public class Conector
             return;
         }
         
+        Print.hintln("Connecting to database...");
+        
         try
         {
             Class.forName(this.driverClass);
@@ -72,7 +72,7 @@ public class Conector
         }
         catch (Exception exception)
         {
-            Print.errorln("Cannot connect to the database! Error: " + exception.getMessage());
+            Print.errorln("Cannot connect to the database! " + exception.getMessage());
         }
     }
     
@@ -99,18 +99,5 @@ public class Conector
         {
             Print.errorln("Cannot disconnect from the database! Error: " + exception.getMessage());
         }
-    }
-    
-    /**
-     * Executes the given SQL query offering information from it
-     * @param query SQL query to run
-     * @return The query's result
-     * @throws SQLException 
-     * @version 1.2
-     * @since 2.5
-     */
-    static ResultSet executeQuery(String query) throws SQLException
-    {
-        return Conector.connection.prepareStatement(query).executeQuery();
     }
 }

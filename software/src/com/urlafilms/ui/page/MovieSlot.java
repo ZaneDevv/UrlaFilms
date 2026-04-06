@@ -1,7 +1,9 @@
 package com.urlafilms.ui.page;
 
 import com.urlafilms.ui.elements.TextLabel;
+import com.urlafilms.ui.elements.TextLabelBuilder;
 import com.urlafilms.ui.elements.TextWeight;
+import com.urlafilms.formatter.Time;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -54,12 +56,21 @@ public class MovieSlot
         this.panel.setLayout(new BoxLayout(this.panel, BoxLayout.Y_AXIS));
         this.panel.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
 
-        TextLabel titleText = new TextLabel(this.title, TextLabel.DEFAULT_TEXT_COLOR, "SansSerif", TextWeight.Bold, 24);
-        TextLabel detailsText = new TextLabel(
-            this.emmisionYear + " - " + MovieSlot.formatDuration(this.duration),
-                new Color(0xA0A0A0), "SansSerif", TextWeight.Italic, 14
-        );
-        TextLabel scenarioTypeText = new TextLabel(this.scenarioType, TextLabel.DEFAULT_TEXT_COLOR, "SansSerif", TextWeight.Normal, 14);
+        TextLabel titleText = new TextLabelBuilder()
+                .setText(this.title)
+                .setTextWeight(TextWeight.Bold)
+                .setTextSize(24)
+                .build();
+        
+        TextLabel detailsText = new TextLabelBuilder()
+                .setText(this.emmisionYear + " - " + Time.format(this.duration))
+                .setTextColor(new Color(0xA0A0A0))
+                .setTextWeight(TextWeight.Italic)
+                .build();
+
+        TextLabel scenarioTypeText = new TextLabelBuilder()
+                .setText(this.scenarioType)
+                .build();
 
         titleText.setAlignmentX(Component.LEFT_ALIGNMENT);
         detailsText.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -77,19 +88,6 @@ public class MovieSlot
         separator.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         this.panel.add(separator);
-    }
-    
-    /**
-     * Formats the given second to digital time
-     * @param duration Movie's duration
-     * @return Given number with format 0:00:00
-     * @version 1.0
-     * @since 1.0
-     * @author Álvaro Fernández Barrero
-     */
-    private static String formatDuration(int duration)
-    {
-        return String.format("%d:%02d:%02d", duration / 3600, (duration / 60) % 60, duration % 60);
     }
     
     // ---------------------------------------------------------

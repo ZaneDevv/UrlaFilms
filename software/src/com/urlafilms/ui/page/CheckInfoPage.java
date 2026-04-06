@@ -1,13 +1,12 @@
 package com.urlafilms.ui.page;
 
 import com.urlafilms.database.Access;
-import com.urlafilms.ui.MainUi;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
  * Check information UI page class
- * @version 1.0
+ * @version 2.1
  * @author Álvaro Fernández Barrero
  */
 public class CheckInfoPage extends UiPage
@@ -18,18 +17,29 @@ public class CheckInfoPage extends UiPage
     
     private static CheckInfoPage singletonPage = null;
     
+    private MovieSlotFactory movieSlotFactory = null;
+    
     // ---------------------------------------------------------
     // CONSTRUCTORS
     // ---------------------------------------------------------
     
+    /**
+     * Creates a new check information page
+     * @throws Exception There is already a instance of this class
+     * @version 1.2
+     * @since 1.0
+     * @author Álvaro Fernández Barrero
+     */
     public CheckInfoPage() throws Exception
     {
+        super();
+        
         if (CheckInfoPage.singletonPage != null)
         {
             throw new Exception("Check information page was already created!");
         }
         
-        super();
+        this.movieSlotFactory = new MovieSlotFactory();
         CheckInfoPage.singletonPage = this;
     }
     
@@ -43,17 +53,16 @@ public class CheckInfoPage extends UiPage
         super.generateUi();
         this.panel.setLayout(new javax.swing.BoxLayout(this.panel, javax.swing.BoxLayout.Y_AXIS));
         
+        if (this.movieSlotFactory == null)
+        {
+            this.movieSlotFactory = new MovieSlotFactory();
+        }
+        
         try (ResultSet result = Access.getMovies())
         {
             while (result.next())
             {
-                MovieSlot slot = new MovieSlot(
-                        result.getString("titulo"),
-                        result.getString("tipoEscenario"),
-                        result.getInt("duracion"),
-                        result.getInt("anioEmision")
-                );
-                
+                MovieSlot slot = this.movieSlotFactory.generateByQueryResult(result);
                 this.panel.add(slot.panel);
             }
         }

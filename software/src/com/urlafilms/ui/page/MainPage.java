@@ -26,12 +26,13 @@ public class MainPage extends UiPage
     
     public MainPage() throws Exception
     {
+        super();
+        
         if (MainPage.singletonPage != null)
         {
             throw new Exception("Main page was already created!");
         }
         
-        super();
         MainPage.singletonPage = this;
     }
     
