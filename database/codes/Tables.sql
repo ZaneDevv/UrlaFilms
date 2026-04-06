@@ -130,7 +130,14 @@ ALTER TABLE Proyecta ADD CONSTRAINT proyectaEnSalaForeignKey FOREIGN KEY(idSala)
 -----------------------------*/
 
 ALTER TABLE Salas ADD CONSTRAINT checkTipoProyeccion CHECK(REGEXP_LIKE(tipoProyeccion, '^[0-9]D$'));
+
 ALTER TABLE Actores ADD CONSTRAINT checkEsApto CHECK(UPPER(esApto) IN ('Y', 'N'));
+ALTER TABLE Actores ADD CONSTRAINT checkActoresEdad CHECK(edad > 0 AND edad < 65);
+
+ALTER TABLE Directores ADD CONSTRAINT checkDirectoresEdad CHECK(edad > 0 AND edad < 65);
+
+ALTER TABLE Peliculas ADD CONSTRAINT checkDuracion CHECK(duracion > 0);
+ALTER TABLE Peliculas ADD CONSTRAINT checkAnioEmision CHECK(anioEmision > 0);
 
 /*-----------------------------
     CHECKING TABLES
@@ -148,3 +155,20 @@ DESCRIBE GeneroPelicula;
 DESCRIBE Aparece;
 DESCRIBE Dirige;
 DESCRIBE Proyecta;
+
+/*-----------------------------
+    REMOVING TABLES
+-----------------------------*/
+
+DROP TABLE CuerpoTecnico;
+DROP TABLE Guionistas;
+DROP TABLE Productores;
+DROP TABLE Actores;
+DROP TABLE Directores;
+DROP TABLE Peliculas;
+DROP TABLE Salas;
+DROP TABLE PaisRodacion;
+DROP TABLE GeneroPelicula;
+DROP TABLE Aparece;
+DROP TABLE Dirige;
+DROP TABLE Proyecta;
