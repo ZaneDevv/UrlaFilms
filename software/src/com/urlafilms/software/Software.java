@@ -8,6 +8,7 @@ import com.urlafilms.ui.MainUi;
  * Initializes the whole project
  * @version 1.4
  * @author Álvaro Fernández Barrero
+ * @hidden
  */
 public class Software
 {

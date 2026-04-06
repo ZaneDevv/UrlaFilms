@@ -39,8 +39,6 @@ public abstract class UiPage
         UiPage.pagesAmount++;
         
         this.pageIndex = UiPage.pagesAmount;
-        this.generateUi();
-        
         this.desactivate();
     }
     

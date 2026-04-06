@@ -15,9 +15,7 @@ public class ButtonBuilder
     // ---------------------------------------------------------
     
     private String text = "";
-    
     private int cornerRadius = 0;
-    
     private Gradient gradient = new Gradient();
     
     // ---------------------------------------------------------

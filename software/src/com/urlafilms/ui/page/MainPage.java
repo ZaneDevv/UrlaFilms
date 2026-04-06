@@ -34,6 +34,7 @@ public class MainPage extends UiPage
         }
         
         MainPage.singletonPage = this;
+        this.generateUi();
     }
     
     // ---------------------------------------------------------

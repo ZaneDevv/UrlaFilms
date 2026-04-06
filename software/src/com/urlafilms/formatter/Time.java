@@ -1,7 +1,7 @@
 package com.urlafilms.formatter;
 
 /**
- *
+ * Time formatter class
  * @author Álvaro Fernández Barrero
  */
 public class Time
