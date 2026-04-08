@@ -9,7 +9,7 @@ import java.sql.SQLException;
  * @version 1.1
  * @author Álvaro Fernández Barrero
  */
-public class Access
+public final class Access
 {
     // ---------------------------------------------------------
     // METHODS

@@ -4,19 +4,22 @@ import com.urlafilms.database.Access;
 import com.urlafilms.ui.MainUi;
 import com.urlafilms.ui.elements.Button;
 import com.urlafilms.ui.elements.ButtonBuilder;
+import com.urlafilms.ui.elements.Scroll;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 
 /**
  * Check information UI page class
- * @version 2.1
+ * @version 2.3
  * @author Álvaro Fernández Barrero
  */
-public class CheckInfoPage extends UiPage
+public final class CheckInfoPage extends UiPage
 {
     // ---------------------------------------------------------
     // ATTRIBUTES
@@ -25,6 +28,8 @@ public class CheckInfoPage extends UiPage
     private static CheckInfoPage singletonPage = null;
     
     private MovieSlotFactory movieSlotFactory = null;
+    
+    private JPanel contentPanel = null;
     
     // ---------------------------------------------------------
     // CONSTRUCTORS
@@ -60,54 +65,64 @@ public class CheckInfoPage extends UiPage
     public void generateUi()
     {
         super.generateUi();
-        this.panel.setLayout(new java.awt.BorderLayout());
-        
+
+        this.panel.setLayout(new BorderLayout());
+
         Button backButton = new ButtonBuilder()
                 .setText("<")
                 .build();
-        
-        JPanel contentPanel = new JPanel();
-        contentPanel.setOpaque(false);
-        contentPanel.setLayout(new javax.swing.BoxLayout(contentPanel, javax.swing.BoxLayout.Y_AXIS));
 
-        JScrollPane scrollPane = new JScrollPane(contentPanel);
+        this.contentPanel = new JPanel();
+        this.contentPanel.setOpaque(false);
+        this.contentPanel.setLayout(new BoxLayout(this.contentPanel, BoxLayout.Y_AXIS));
+
+        JScrollPane scrollPane = new JScrollPane(this.contentPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER );
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(MainUi.SCREEN_WIDTH - 25, MainUi.SCREEN_HEIGHT - 100));
         scrollPane.setOpaque(false);
         scrollPane.getViewport().setOpaque(false);
-        
         scrollPane.setBorder(null);
         scrollPane.getViewport().setBorder(null);
-
         scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, new JPanel() {{ setOpaque(false); }});
         scrollPane.setCorner(JScrollPane.LOWER_RIGHT_CORNER, new JPanel() {{ setOpaque(false); }});
         scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, new JPanel() {{ setOpaque(false); }});
         scrollPane.setCorner(JScrollPane.LOWER_LEFT_CORNER, new JPanel() {{ setOpaque(false); }});
 
-        scrollPane.getVerticalScrollBar().setBorder(null);
-        
         JScrollBar verticalBar = scrollPane.getVerticalScrollBar();
+        verticalBar.setUI(new Scroll());
+        verticalBar.setPreferredSize(new Dimension(10, 0));
+        verticalBar.setOpaque(false);
+        verticalBar.setBorder(null);
         verticalBar.setUnitIncrement(20);
         verticalBar.setBlockIncrement(100);
 
-        this.panel.add(backButton);
-        this.panel.add(scrollPane, java.awt.BorderLayout.CENTER);
-
+        this.panel.add(backButton, BorderLayout.NORTH);
+        this.panel.add(scrollPane, BorderLayout.CENTER);
+        
+        
+        this.generateMovieSlots();
+    }
+    
+    /**
+     * Generates the movie's slot
+     * @version 1.0
+     * @since 1.0
+     * @author Álvaro Fernández Barrero
+     */
+    private void generateMovieSlots()
+    {
         try (ResultSet result = Access.getMovies())
         {
             while (result.next())
             {
                 MovieSlot slot = this.movieSlotFactory.generateByQueryResult(result);
-                contentPanel.add(slot.panel);
+                this.contentPanel.add(slot.panel);
             }
         }
         catch (SQLException exception)
         {
             exception.printStackTrace();
         }
-
-        this.panel.revalidate();
-        this.panel.repaint();
     }
 }

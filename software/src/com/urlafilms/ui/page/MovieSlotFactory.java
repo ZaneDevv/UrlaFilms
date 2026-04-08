@@ -9,7 +9,7 @@ import java.sql.SQLException;
  * @version 1.0
  * @author Álvaro Fernández Barrero
  */
-public class MovieSlotFactory
+public final class MovieSlotFactory
 {
     // ---------------------------------------------------------
     // METHODS

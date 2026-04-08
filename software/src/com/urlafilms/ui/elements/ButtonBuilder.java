@@ -8,7 +8,7 @@ import java.awt.Color;
  * @version 1.4
  * @author Álvaro Fernández Barrero
  */
-public class ButtonBuilder
+public final class ButtonBuilder
 {
     // ---------------------------------------------------------
     // ATTRIBUTES

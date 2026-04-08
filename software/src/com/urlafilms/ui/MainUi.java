@@ -13,7 +13,7 @@ import javax.swing.JPanel;
  * @version 2.2
  * @author Álvaro Fernández Barrero
  */
-public class MainUi
+public final class MainUi
 {
     // ---------------------------------------------------------
     // CONSTANTS

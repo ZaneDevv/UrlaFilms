@@ -29,18 +29,28 @@ public class MovieSlot
     private String title = "";
     private String scenarioType = "";
     private int duration = 0;
-    private int emmisionYear = 0;
+    private int emisionYear = 0;
     
     // ---------------------------------------------------------
     // CONSTRUCTORS
     // ---------------------------------------------------------
     
-    public MovieSlot(String title, String scenarioType, int duration, int emmisionYear)
+    /**
+     * Creates a new movie slot UI with the movie's information
+     * @param title Movie's title
+     * @param scenarioType Movie's scenario type
+     * @param duration Movie's duration
+     * @param emisionYear Movie's emission year
+     * @version 1.0
+     * @since 1.0
+     * @author Álvaro Fernández Barrero
+     */
+    public MovieSlot(String title, String scenarioType, int duration, int emisionYear)
     {
         this.title = title;
         this.scenarioType = scenarioType;
         this.duration = duration;
-        this.emmisionYear = emmisionYear;
+        this.emisionYear = emisionYear;
         
         this.generateUi();
     }
@@ -49,6 +59,12 @@ public class MovieSlot
     // METHODS
     // ---------------------------------------------------------
     
+    /**
+     * Generates the slot's UI
+     * @version 1.1
+     * @since 1.0
+     * @author Álvaro Fernández Barrero
+     */
     private void generateUi()
     {
         this.panel = new JPanel();
@@ -63,10 +79,13 @@ public class MovieSlot
                 .build();
         
         TextLabel detailsText = new TextLabelBuilder()
-                .setText(this.emmisionYear + " - " + Time.format(this.duration))
+                .setText(String.valueOf(this.emisionYear))
                 .setTextColor(new Color(0xA0A0A0))
                 .setTextWeight(TextWeight.Italic)
                 .build();
+        
+        TextLabel durationText = new TextLabel(detailsText);
+        durationText.setText("Duration: " + Time.format(this.duration * 60));
 
         TextLabel scenarioTypeText = new TextLabelBuilder()
                 .setText(this.scenarioType)
@@ -74,11 +93,14 @@ public class MovieSlot
 
         titleText.setAlignmentX(Component.LEFT_ALIGNMENT);
         detailsText.setAlignmentX(Component.LEFT_ALIGNMENT);
+        durationText.setAlignmentX(Component.LEFT_ALIGNMENT);
         scenarioTypeText.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         this.panel.add(titleText);
         this.panel.add(Box.createVerticalStrut(5));
         this.panel.add(detailsText);
+        this.panel.add(Box.createVerticalStrut(4));
+        this.panel.add(durationText);
         this.panel.add(Box.createVerticalStrut(4));
         this.panel.add(scenarioTypeText);
         this.panel.add(Box.createVerticalStrut(10));
@@ -89,8 +111,4 @@ public class MovieSlot
 
         this.panel.add(separator);
     }
-    
-    // ---------------------------------------------------------
-    // GETTERS & SETTERS
-    // ---------------------------------------------------------
 }

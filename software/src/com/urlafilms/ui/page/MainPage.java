@@ -12,7 +12,7 @@ import javax.swing.JLabel;
  * @version 1.0
  * @author Álvaro Fernández Barrero
  */
-public class MainPage extends UiPage
+public final class MainPage extends UiPage
 {
     // ---------------------------------------------------------
     // ATTRIBUTES

@@ -9,7 +9,7 @@ import java.sql.DriverManager;
  * @version 2.1
  * @author Álvaro Fernández Barrero
  */
-public class Conector
+public final class Conector
 {
     // ---------------------------------------------------------
     // ATTRIBUTES

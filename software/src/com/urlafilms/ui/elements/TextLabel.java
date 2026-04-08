@@ -9,7 +9,7 @@ import javax.swing.JLabel;
  * @version 2.1
  * @author Álvaro Fernández Barrero
  */
-public class TextLabel extends JLabel
+public final class TextLabel extends JLabel
 {
     // ---------------------------------------------------------
     // ATTRIBUTES
@@ -85,7 +85,7 @@ public class TextLabel extends JLabel
      */
     public TextLabel(TextLabel textLabel)
     {
-        this(textLabel.getText(), textLabel.getTextColor());
+        this(textLabel.getText(), textLabel.getTextColor(), textLabel.getFont());
     }
     
     // ---------------------------------------------------------

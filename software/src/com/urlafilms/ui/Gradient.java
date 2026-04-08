@@ -7,7 +7,7 @@ import java.awt.Color;
  * @version 1.1
  * @author Álvaro Fernández Barrero
  */
-public class Gradient
+public final class Gradient
 {
     // ---------------------------------------------------------
     // ATTRIBUTES

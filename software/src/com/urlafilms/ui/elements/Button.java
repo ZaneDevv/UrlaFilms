@@ -12,7 +12,7 @@ import java.awt.RenderingHints;
  * @version 3.1
  * @author Álvaro Fernández Barrero
  */
-public class Button extends JButton
+public final class Button extends JButton
 {
     // ---------------------------------------------------------
     // ATTRIBUTES
