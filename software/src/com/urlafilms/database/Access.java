@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 /**
  * Class for common SQL queries
- * @version 1.1
+ * @version 1.2
  * @author Álvaro Fernández Barrero
  */
 public final class Access
@@ -26,7 +26,7 @@ public final class Access
      */
     private static ResultSet executeQuery(String query) throws SQLException
     {
-        Print.hintln("Running query: " + query);
+        Print.hintln("Running query:\n->\t" + query);
         return Conector.connection.prepareStatement(query).executeQuery();
     }
     
@@ -34,7 +34,7 @@ public final class Access
      * Obtains all the elements with all the fields from the given table
      * @param tableName Table to obtain the information from
      * @return All the elements with all the fields from the given table
-     * @throws SQLException The table's name does not exisst
+     * @throws SQLException The table's name does not exist
      * @version 1.0
      * @since 1.0
      * @author ÁLvaro Fernández Barrero
@@ -55,6 +55,34 @@ public final class Access
     public static ResultSet getMovies() throws SQLException
     {
         return Access.getFullInformationFromTable("Peliculas");
+    }
+
+    /**
+     * Obtains all the elements with all the fields from the table "Peliculas" which satisfy the given condition
+     * @param condition SQL condition that must be satisfied by the movies that are returned
+     * @return All the elements with all the fields from the table "Peliculas" that satisfy the given condition
+     * @throws SQLException Could not access to the table "Peliculas" or the condition is wrong
+     * @version 1.0
+     * @since 1.2
+     * @author Álvaro Fernández Barrero
+     */
+    public static ResultSet getMovies(String condition) throws SQLException
+    {
+        return Access.executeQuery("SELECT * FROM Peliculas WHERE " + condition);
+    }
+    
+    /**
+     * Obtains the movies which title starts with the given beginning
+     * @param title Title's beginning
+     * @return All the movies which title starts with the given beginning
+     * @throws SQLException Could not access to the table "Peliculas"
+     * @version 1.0
+     * @since 1.2
+     * @author Álvaro Fernández Barrero
+     */
+    public static ResultSet getMoviesByInitialTitle(String title) throws SQLException
+    {
+        return Access.executeQuery(String.format("SELECT * FROM Peliculas WHERE UPPER(titulo) LIKE \'%s%%\'", title.toUpperCase()));
     }
     
     /**

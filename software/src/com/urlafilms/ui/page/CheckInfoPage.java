@@ -7,6 +7,8 @@ import com.urlafilms.ui.elements.ButtonBuilder;
 import com.urlafilms.ui.elements.Scroll;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.TextField;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.BoxLayout;
@@ -16,7 +18,7 @@ import javax.swing.JScrollPane;
 
 /**
  * Check information UI page class
- * @version 2.3
+ * @version 2.5
  * @author Álvaro Fernández Barrero
  */
 public final class CheckInfoPage extends UiPage
@@ -30,6 +32,8 @@ public final class CheckInfoPage extends UiPage
     private MovieSlotFactory movieSlotFactory = null;
     
     private JPanel contentPanel = null;
+    
+    private String titleLike = "";
     
     // ---------------------------------------------------------
     // CONSTRUCTORS
@@ -62,8 +66,7 @@ public final class CheckInfoPage extends UiPage
     // ---------------------------------------------------------
     
     @Override
-    public void generateUi()
-    {
+    public void generateUi() {
         super.generateUi();
 
         this.panel.setLayout(new BorderLayout());
@@ -71,6 +74,15 @@ public final class CheckInfoPage extends UiPage
         Button backButton = new ButtonBuilder()
                 .setText("<")
                 .build();
+
+        TextField titleTextField = new TextField();
+
+        JPanel topPanel = new JPanel();
+        topPanel.setOpaque(false);
+        topPanel.setLayout(new GridLayout(2, 1, 0, 20));
+
+        topPanel.add(backButton);
+        topPanel.add(titleTextField);
 
         this.contentPanel = new JPanel();
         this.contentPanel.setOpaque(false);
@@ -84,11 +96,12 @@ public final class CheckInfoPage extends UiPage
         scrollPane.getViewport().setOpaque(false);
         scrollPane.setBorder(null);
         scrollPane.getViewport().setBorder(null);
+        
         scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, new JPanel() {{ setOpaque(false); }});
         scrollPane.setCorner(JScrollPane.LOWER_RIGHT_CORNER, new JPanel() {{ setOpaque(false); }});
         scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, new JPanel() {{ setOpaque(false); }});
         scrollPane.setCorner(JScrollPane.LOWER_LEFT_CORNER, new JPanel() {{ setOpaque(false); }});
-
+        
         JScrollBar verticalBar = scrollPane.getVerticalScrollBar();
         verticalBar.setUI(new Scroll());
         verticalBar.setPreferredSize(new Dimension(10, 0));
@@ -97,11 +110,15 @@ public final class CheckInfoPage extends UiPage
         verticalBar.setUnitIncrement(20);
         verticalBar.setBlockIncrement(100);
 
-        this.panel.add(backButton, BorderLayout.NORTH);
+        this.panel.add(topPanel, BorderLayout.NORTH);
         this.panel.add(scrollPane, BorderLayout.CENTER);
+
+        this.updateMovieSlots();
         
-        
-        this.generateMovieSlots();
+        backButton.addActionListener(e -> {
+            this.titleLike = titleTextField.getText();
+            this.updateMovieSlots();
+        });
     }
     
     /**
@@ -112,7 +129,7 @@ public final class CheckInfoPage extends UiPage
      */
     private void generateMovieSlots()
     {
-        try (ResultSet result = Access.getMovies())
+        try (ResultSet result = Access.getMoviesByInitialTitle(this.titleLike))
         {
             while (result.next())
             {
@@ -124,5 +141,31 @@ public final class CheckInfoPage extends UiPage
         {
             exception.printStackTrace();
         }
+    }
+    
+    /**
+     * Removes all the movie slots in UI
+     * @version 1.0
+     * @since 2.4
+     * @author Álvaro Fernández Barrero 
+     */
+    private void removeMovieSlots()
+    {
+        this.contentPanel.removeAll();
+    }
+    
+    /**
+     * Updates the movie slots
+     * @version 1.0
+     * @since 2.4
+     * @author Álvaro Fernández Barrero 
+     */
+    private void updateMovieSlots()
+    {
+        this.contentPanel.revalidate();
+        this.contentPanel.repaint();
+        
+        this.removeMovieSlots();
+        this.generateMovieSlots();
     }
 }
