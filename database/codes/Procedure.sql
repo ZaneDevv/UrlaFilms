@@ -35,6 +35,8 @@ EXCEPTION
 END pr_registrar_pelicula;
 
 -- Asignar actor a grupo con verificacion
+SET SERVEROUTPUT ON;
+
 CREATE OR REPLACE PROCEDURE pr_asignar_actor_grupo(
     p_actor_id INT,
     p_pelicula_id INT
@@ -72,6 +74,8 @@ EXCEPTION
 END pr_asignar_actor_elenco;
 
 -- Aplicar descuento masivo a precios de proyecciones (Usamos cursores)
+SET SERVEROUTPUT ON;
+
 CREATE OR REPLACE PROCEDURE pr_descuento_horario_masivo(
     p_horario VARCHAR2,
     p_monto_descuento NUMBER
@@ -85,7 +89,7 @@ CREATE OR REPLACE PROCEDURE pr_descuento_horario_masivo(
     v_nuevo_precio NUMBER(4,2);
     v_contador INT := 0;
 BEGIN
-    -- Recorremos las proyecciones usando un ciclo FOR de cursor
+    -- Recorremos las proyecciones usando un bucle FOR de cursor
     FOR r_proy IN c_proyecciones LOOP
         -- Calculamos el nuevo precio asegurándonos de que no sea menor a 0
         v_nuevo_precio := r_proy.precio - p_monto_descuento;
@@ -111,6 +115,8 @@ EXCEPTION
 END pr_descuento_horario_masivo;
 
 -- Cambiar horario de proyección con validación de mutación
+SET SERVEROUTPUT ON;
+
 CREATE OR REPLACE PROCEDURE pr_cambiar_horario_funcion(
     p_pelicula_id INT,
     p_sala_id INT,
@@ -121,7 +127,7 @@ BEGIN
     SET horario = p_nuevo_horario
     WHERE idPelicula = p_pelicula_id AND idSala = p_sala_id;
     
-    -- Si el UPDATE no afectó a ninguna fila, es que la función no existía
+    -- Si el UPDATE no afecta a ninguna fila, es que la función no existía
     IF SQL%NOTFOUND THEN
         DBMS_OUTPUT.PUT_LINE('AVISO: No se encontró ninguna proyección para la película ' || p_pelicula_id || ' en la sala ' || p_sala_id);
     ELSE
@@ -136,6 +142,8 @@ EXCEPTION
 END pr_cambiar_horario_funcion;
 
 -- Eliminar un actor del sistema de forma segura
+SET SERVEROUTPUT ON;
+
 CREATE OR REPLACE PROCEDURE pr_dar_de_baja_actor(p_actor_id INT) IS
 BEGIN
     -- Borramos sus asignaciones en los grupos para evitar fallos de clave foránea
