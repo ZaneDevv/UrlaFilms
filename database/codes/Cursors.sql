@@ -43,3 +43,40 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Actor: ' || r_actor.nombre || ' ' || r_actor.apellido1 || ' | Edad: ' || r_actor.edad || ' | País: ' || r_actor.nacionalidad);
     END LOOP;
 END;
+
+-- Listado de directores mayores de 50 Años (Cursor Explícito)
+DECLARE
+    CURSOR c_directores_viejos IS
+        SELECT nombre, apellido1, edad 
+        FROM Directores 
+        WHERE edad > 50;
+        
+    v_nombre VARCHAR2(20);
+    v_apellido VARCHAR2(20);
+    v_edad INT;
+    v_total_viejos INT := 0;
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('--- DIRECTORES MAYORES DE 50 AÑOS ---');
+    
+    OPEN c_directores_viejos;
+    LOOP
+        FETCH c_directores_viejos INTO v_nombre, v_apellido, v_edad;
+        EXIT WHEN c_directores_viejos%NOTFOUND; -- Control manual de salida
+        
+        v_total_viejos := v_total_viejos + 1;
+        DBMS_OUTPUT.PUT_LINE('Nombre: ' || v_nombre || ' ' || v_apellido || ' | Edad: ' || v_edad);
+    END LOOP;
+    CLOSE c_directores_viejos;
+    
+    DBMS_OUTPUT.PUT_LINE('Total de directores veteranos encontrados: ' || v_total_viejos);
+END;
+
+-- Reporte de películas cortas (Cursor implícito con FOR)
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('--- LISTADO DE PELÍCULAS CORTAS (MENOS DE 90 MINUTOS) ---');
+    
+    -- El cursor es la subconsulta dentro del paréntesis
+    FOR r_peli IN (SELECT titulo, duracion FROM Peliculas WHERE duracion < 90) LOOP
+        DBMS_OUTPUT.PUT_LINE('Película: ' || r_peli.titulo || ' | Duración exacta: ' || r_peli.duracion || ' min.');
+    END LOOP;
+END;
