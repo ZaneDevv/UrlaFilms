@@ -34,3 +34,36 @@ FROM Actores a
 LEFT JOIN Aparece ap ON a.id = ap.idActor
 WHERE UPPER(a.esApto) = 'Y'
 GROUP BY a.id, a.nombre, a.apellido1, a.nacionalidad;
+
+-- Historial de guionistas y productores con experiencia
+CREATE OR REPLACE VIEW Vista_Creadores_Experimentados AS
+SELECT 
+    'GUIONISTA' AS rol,
+    id,
+    nombre || ' ' || apellido1 || ' ' || apellido2 AS nombre_completo,
+    trabajoPrevio
+FROM Guionistas
+WHERE trabajoPrevio IS NOT NULL
+UNION ALL
+SELECT 
+    'PRODUCTOR' AS rol,
+    id,
+    nombre || ' ' || apellido1 || ' ' || apellido2 AS nombre_completo,
+    trabajoPrevio
+FROM Productores
+WHERE trabajoPrevio IS NOT NULL;
+
+-- Ocupación de salas y películas proyectadas
+CREATE OR REPLACE VIEW Vista_Ocupacion_Salas AS
+SELECT 
+    s.id AS sala_id,
+    s.tipoProyeccion,
+    pr.horario,
+    p.titulo AS pelicula_titulo,
+    p.tipoEscenario,
+    gp.genero
+FROM Salas s
+JOIN Proyecta pr ON s.id = pr.idSala
+JOIN Peliculas p ON p.id = pr.idPelicula
+LEFT JOIN GeneroPelicula gp ON p.id = gp.idPelicula;
+
