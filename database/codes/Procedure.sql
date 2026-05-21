@@ -109,3 +109,46 @@ EXCEPTION
         ROLLBACK;
         DBMS_OUTPUT.PUT_LINE('ERROR: Se canceló la actualización masiva por un error inesperado.');
 END pr_descuento_horario_masivo;
+
+-- Cambiar horario de proyección con validación de mutación
+CREATE OR REPLACE PROCEDURE pr_cambiar_horario_funcion(
+    p_pelicula_id INT,
+    p_sala_id INT,
+    p_nuevo_horario VARCHAR2
+) IS
+BEGIN
+    UPDATE Proyecta
+    SET horario = p_nuevo_horario
+    WHERE idPelicula = p_pelicula_id AND idSala = p_sala_id;
+    
+    -- Si el UPDATE no afectó a ninguna fila, es que la función no existía
+    IF SQL%NOTFOUND THEN
+        DBMS_OUTPUT.PUT_LINE('AVISO: No se encontró ninguna proyección para la película ' || p_pelicula_id || ' en la sala ' || p_sala_id);
+    ELSE
+        COMMIT;
+        DBMS_OUTPUT.PUT_LINE('ÉXITO: Horario actualizado correctamente a las ' || p_nuevo_horario);
+    END IF;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('ERROR INESPERADO: ' || SQLERRM);
+END pr_cambiar_horario_funcion;
+
+-- Eliminar un actor del sistema de forma segura
+CREATE OR REPLACE PROCEDURE pr_dar_de_baja_actor(p_actor_id INT) IS
+BEGIN
+    -- Borramos sus asignaciones en los grupos para evitar fallos de clave foránea
+    DELETE FROM Aparece WHERE idActor = p_actor_id;
+    
+    -- Ahora borramos al actor de su tabla principal
+    DELETE FROM Actores WHERE id = p_actor_id;
+    
+    IF SQL%NOTFOUND THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR: El ID de actor ' || p_actor_id || ' no existe.');
+        ROLLBACK;
+    ELSE
+        COMMIT;
+        DBMS_OUTPUT.PUT_LINE('ÉXITO: El actor y todo su historial de elencos fueron eliminados.');
+    END IF;
+END pr_dar_de_baja_actor;
