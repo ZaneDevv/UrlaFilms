@@ -46,3 +46,30 @@ BEGIN
         RETURN 'SÍ'; -- La sala está libre
     END IF;
 END fn_sala_disponible;
+
+-- Calcular la edad promedio del grupo de una película
+CREATE OR REPLACE FUNCTION fn_edad_promedio_elenco(p_pelicula_id INT) 
+RETURN NUMBER IS
+    v_edad_promedio NUMBER(4,1) := 0; -- (4,1) Significa que el primer número (4) es la Precisión: Es la cantidad total máxima de dígitos que puede tener el número.
+                                            -- El segundo número (1) es la Escala: Que es la cantidad fija de dígitos que se guardarán a la derecha del punto decimal.
+                                      -- := 0 
+BEGIN
+    SELECT NVL(AVG(a.edad), 0) INTO v_edad_promedio
+    FROM Actores a
+    JOIN Aparece ap ON a.id = ap.idActor
+    WHERE ap.idPelicula = p_pelicula_id;
+    
+    RETURN v_edad_promedio;
+END fn_edad_promedio_elenco;
+
+-- Contar películas por país de rodaje
+CREATE OR REPLACE FUNCTION fn_total_peliculas_pais(p_pais VARCHAR2) 
+RETURN INT IS
+    v_total INT := 0;
+BEGIN
+    SELECT COUNT(*) INTO v_total
+    FROM PaisRodacion
+    WHERE UPPER(pais) = UPPER(p_pais);
+    
+    RETURN v_total;
+END fn_total_peliculas_pais;
