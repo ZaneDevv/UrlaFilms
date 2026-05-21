@@ -36,7 +36,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Precios nocturnos actualizados con éxito.');
 END;
 
--- Informe de actores jóvenes (Cursor implícito en un ciclo FOR)
+-- Informe de actores jóvenes (Cursor implícito en un bucle FOR)
 BEGIN
     DBMS_OUTPUT.PUT_LINE('--- INFORME DE ACTORES MENORES DE 25 AÑOS ---');
     FOR r_actor IN (SELECT nombre, apellido1, edad, nacionalidad FROM Actores WHERE edad < 25) LOOP
