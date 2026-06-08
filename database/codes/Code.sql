@@ -182,6 +182,7 @@ DROP TABLE Proyecta;
     TRIGGERS
 -----------------------------*/
 
+-- 1.
 CREATE OR REPLACE TRIGGER trigger_director_pais_rodaje
 BEFORE INSERT OR UPDATE ON Dirige
 FOR EACH ROW
@@ -204,6 +205,13 @@ BEGIN
     END IF;
 END trigger_director_pais_rodaje;
 
+INSERT INTO Directores (id, nacionalidad, edad, nombre, apellido1, apellido2) VALUES (1, 'USA', 50, 'John', 'Doe', 'Smith');
+INSERT INTO Peliculas (id, duracion, anioEmision, tipoEscenario, titulo) VALUES (101, 120, 2020, 'Studio', 'Movie A');
+INSERT INTO PaisRodacion (idPelicula, pais) VALUES (101, 'Spain');
+INSERT INTO Dirige (idDirector, idPelicula) VALUES (1, 101);
+
+
+-- 2.
 CREATE OR REPLACE TRIGGER trigger_check_age_consistency
 BEFORE INSERT ON Aparece
 FOR EACH ROW
@@ -232,6 +240,9 @@ BEGIN
     END IF;
 END;
 
+INSERT INTO Actores (id, esApto, nacionalidad, edad, nombre, apellido1, apellido2) VALUES (201, 'Y', 'Spanish', 8, 'Child', 'Actor', 'One');
+INSERT INTO Peliculas (id, duracion, anioEmision, tipoEscenario, titulo) VALUES (202, 90, 2020, 'Studio', 'Movie B');
+INSERT INTO Aparece (idActor, idPelicula) VALUES (201, 202);
 
 /*-----------------------------
     REMOVING TRIGGERS
