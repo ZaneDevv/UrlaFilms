@@ -1,3 +1,8 @@
+/*
+    Alumnos: Álvaro Fernández Barrero
+             Rubén Catalon Orza
+ */
+
 /*-----------------------------
     CREATING TABLES
 -----------------------------*/
@@ -129,7 +134,7 @@ ALTER TABLE Proyecta ADD CONSTRAINT proyectaEnSalaForeignKey FOREIGN KEY(idSala)
     CHECKS
 -----------------------------*/
 
-ALTER TABLE Salas ADD CONSTRAINT checkTipoProyeccion CHECK(REGEXP_LIKE(tipoProyeccion, '^[0-9]D$'));
+ALTER TABLE Salas ADD CONSTRAINT checkTipoProyeccion CHECK(REGEXP_LIKE(tipoProyeccion, '^[2-9]D$'));
 
 ALTER TABLE Actores ADD CONSTRAINT checkEsApto CHECK(UPPER(esApto) IN ('Y', 'N'));
 ALTER TABLE Actores ADD CONSTRAINT checkActoresEdad CHECK(edad > 0 AND edad < 65);
@@ -177,23 +182,27 @@ DROP TABLE Proyecta;
     TRIGGERS
 -----------------------------*/
 
-CREATE OR REPLACE TRIGGER trigger_peliculas_director
-BEFORE INSERT ON Peliculas
+CREATE OR REPLACE TRIGGER trigger_director_pais_rodaje
+BEFORE INSERT OR UPDATE ON Dirige
 FOR EACH ROW
 DECLARE
-    directorsAmount INT := 0;
-
+    v_coincide INTEGER;
+    v_nacionalidad Directores.nacionalidad%TYPE;
 BEGIN
-    SELECT COUNT(*)
-    INTO directorsAmount
-    FROM Dirige
-    INNER JOIN Directores ON Directores.id = Dirige.idDirector
-    WHERE Dirige.idPelicula = :NEW.id;
+    SELECT nacionalidad INTO v_nacionalidad
+    FROM Directores
+    WHERE id = :NEW.idDirector;
 
-    IF directorsAmount = 0 THEN
-        RAISE_APPLICATION_ERROR(-2001, 'Movie has no directors!');
+    SELECT COUNT(*)
+    INTO v_coincide
+    FROM Peliculas
+    JOIN PaisRodacion ON Peliculas.id = PaisRodacion.idPelicula
+    WHERE Peliculas.id = :NEW.idPelicula AND PaisRodacion.pais = v_nacionalidad;
+
+    IF v_coincide = 0 THEN
+        RAISE_APPLICATION_ERROR(-20004, 'Error: El director (nacionalidad ' || v_nacionalidad || ') no coincide con ningún país de rodaje de la película ' || :NEW.idPelicula);
     END IF;
-END;
+END trigger_director_pais_rodaje;
 
 CREATE OR REPLACE TRIGGER trigger_check_age_consistency
 BEFORE INSERT ON Aparece
@@ -201,30 +210,34 @@ FOR EACH ROW
 DECLARE
     movieYear Peliculas.anioEmision%TYPE;
     actorAge Actores.edad%TYPE;
+    birthYear INT;
+    ageAtMovie INT;
 
 BEGIN
     SELECT anioEmision
     INTO movieYear
-    FROM Aparece
-    INNER JOIN Peliculas ON Peliculas.id = Aparece.idPelicula
-    WHERE Aparece.idPelicula = :NEW.idPelicula AND Aparece.idActor = :NEW.idActor;
+    FROM Peliculas
+    WHERE id = :NEW.idPelicula;
 
     SELECT edad
     INTO actorAge
-    FROM Aparece
-    INNER JOIN Actores ON Actores.id = Aparece.idActor
-    WHERE Aparece.idPelicula = :NEW.idPelicula AND Aparece.idActor = :NEW.idActor;
+    FROM Actores
+    WHERE id = :NEW.idActor;
 
-    IF TO_CHAR(SYSDATE, 'YYYY') - actorAge + 5 < movieYear THEN
-        RAISE_APPLICATION_ERROR(-2002, 'Age inconsinstency!');
+    birthYear := EXTRACT(YEAR FROM SYSDATE) - actorAge;
+    ageAtMovie := movieYear - birthYear;
+
+    IF ageAtMovie < 5 THEN
+        RAISE_APPLICATION_ERROR(-20002, 'Inconsistencia de edad: el actor tendría menos de 5 años en el año de emisión.');
     END IF;
 END;
+
 
 /*-----------------------------
     REMOVING TRIGGERS
 -----------------------------*/
 
-DROP TRIGGER trigger_peliculas_director;
+DROP TRIGGER trigger_director_pais_rodaje;
 DROP TRIGGER trigger_check_age_consistency;
 
 /*-----------------------------
@@ -300,6 +313,24 @@ INSERT INTO PaisRodacion (idPelicula, pais) VALUES (13, 'Italia');
 INSERT INTO PaisRodacion (idPelicula, pais) VALUES (14, 'Canadá');
 INSERT INTO PaisRodacion (idPelicula, pais) VALUES (15, 'Japón');
 
+INSERT INTO PaisRodacion (idPelicula, pais) VALUES (1, 'Española');
+INSERT INTO PaisRodacion (idPelicula, pais) VALUES (2, 'Mexicana');
+INSERT INTO PaisRodacion (idPelicula, pais) VALUES (3, 'Española');
+INSERT INTO PaisRodacion (idPelicula, pais) VALUES (3, 'Mexicana');
+INSERT INTO PaisRodacion (idPelicula, pais) VALUES (4, 'Española');
+INSERT INTO PaisRodacion (idPelicula, pais) VALUES (5, 'Mexicana');
+INSERT INTO PaisRodacion (idPelicula, pais) VALUES (7, 'Argentina');
+INSERT INTO PaisRodacion (idPelicula, pais) VALUES (7, 'Española');
+INSERT INTO PaisRodacion (idPelicula, pais) VALUES (8, 'Estadounidense');
+INSERT INTO PaisRodacion (idPelicula, pais) VALUES (9, 'Estadounidense');
+INSERT INTO PaisRodacion (idPelicula, pais) VALUES (10, 'Francesa');
+INSERT INTO PaisRodacion (idPelicula, pais) VALUES (11, 'Española');
+INSERT INTO PaisRodacion (idPelicula, pais) VALUES (12, 'Mexicana');
+INSERT INTO PaisRodacion (idPelicula, pais) VALUES (12, 'Francesa');
+INSERT INTO PaisRodacion (idPelicula, pais) VALUES (13, 'Argentina');
+INSERT INTO PaisRodacion (idPelicula, pais) VALUES (14, 'Estadounidense');
+INSERT INTO PaisRodacion (idPelicula, pais) VALUES (15, 'Francesa');
+
 INSERT INTO GeneroPelicula (idPelicula, genero) VALUES (1, 'Drama');
 INSERT INTO GeneroPelicula (idPelicula, genero) VALUES (1, 'Aventura');
 INSERT INTO GeneroPelicula (idPelicula, genero) VALUES (2, 'Misterio');
@@ -352,25 +383,6 @@ INSERT INTO Aparece (idActor, idPelicula) VALUES (8, 15);
 INSERT INTO Aparece (idActor, idPelicula) VALUES (9, 15);
 INSERT INTO Aparece (idActor, idPelicula) VALUES (10, 15);
 
-INSERT INTO Dirige (idDirector, idPelicula) VALUES (1, 1);
-INSERT INTO Dirige (idDirector, idPelicula) VALUES (2, 2);
-INSERT INTO Dirige (idDirector, idPelicula) VALUES (1, 3);
-INSERT INTO Dirige (idDirector, idPelicula) VALUES (2, 3);
-INSERT INTO Dirige (idDirector, idPelicula) VALUES (1, 4);
-INSERT INTO Dirige (idDirector, idPelicula) VALUES (2, 5);
-INSERT INTO Dirige (idDirector, idPelicula) VALUES (3, 6);
-INSERT INTO Dirige (idDirector, idPelicula) VALUES (3, 7);
-INSERT INTO Dirige (idDirector, idPelicula) VALUES (4, 8);
-INSERT INTO Dirige (idDirector, idPelicula) VALUES (4, 9);
-INSERT INTO Dirige (idDirector, idPelicula) VALUES (5, 10);
-INSERT INTO Dirige (idDirector, idPelicula) VALUES (1, 11);
-INSERT INTO Dirige (idDirector, idPelicula) VALUES (2, 12);
-INSERT INTO Dirige (idDirector, idPelicula) VALUES (3, 13);
-INSERT INTO Dirige (idDirector, idPelicula) VALUES (4, 14);
-INSERT INTO Dirige (idDirector, idPelicula) VALUES (5, 15);
-INSERT INTO Dirige (idDirector, idPelicula) VALUES (1, 7);
-INSERT INTO Dirige (idDirector, idPelicula) VALUES (5, 12);
-
 INSERT INTO Proyecta (idPelicula, idSala, precio, horario) VALUES (1, 1, 8.50, '10:00');
 INSERT INTO Proyecta (idPelicula, idSala, precio, horario) VALUES (1, 2, 10.00, '18:30');
 INSERT INTO Proyecta (idPelicula, idSala, precio, horario) VALUES (2, 2, 9.00, '12:00');
@@ -400,6 +412,25 @@ INSERT INTO Proyecta (idPelicula, idSala, precio, horario) VALUES (14, 3, 13.50,
 INSERT INTO Proyecta (idPelicula, idSala, precio, horario) VALUES (15, 1, 8.25, '11:45');
 INSERT INTO Proyecta (idPelicula, idSala, precio, horario) VALUES (15, 2, 9.75, '16:15');
 
+INSERT INTO Dirige (idDirector, idPelicula) VALUES (1, 1);
+INSERT INTO Dirige (idDirector, idPelicula) VALUES (2, 2);
+INSERT INTO Dirige (idDirector, idPelicula) VALUES (1, 3);
+INSERT INTO Dirige (idDirector, idPelicula) VALUES (2, 3);
+INSERT INTO Dirige (idDirector, idPelicula) VALUES (1, 4);
+INSERT INTO Dirige (idDirector, idPelicula) VALUES (2, 5);
+INSERT INTO Dirige (idDirector, idPelicula) VALUES (3, 6);
+INSERT INTO Dirige (idDirector, idPelicula) VALUES (3, 7);
+INSERT INTO Dirige (idDirector, idPelicula) VALUES (4, 8);
+INSERT INTO Dirige (idDirector, idPelicula) VALUES (4, 9);
+INSERT INTO Dirige (idDirector, idPelicula) VALUES (5, 10);
+INSERT INTO Dirige (idDirector, idPelicula) VALUES (1, 11);
+INSERT INTO Dirige (idDirector, idPelicula) VALUES (2, 12);
+INSERT INTO Dirige (idDirector, idPelicula) VALUES (3, 13);
+INSERT INTO Dirige (idDirector, idPelicula) VALUES (4, 14);
+INSERT INTO Dirige (idDirector, idPelicula) VALUES (5, 15);
+INSERT INTO Dirige (idDirector, idPelicula) VALUES (1, 7);
+INSERT INTO Dirige (idDirector, idPelicula) VALUES (5, 12);
+
 /*-----------------------------
     CHECKING INSERTS
 -----------------------------*/
@@ -416,6 +447,23 @@ SELECT * FROM GeneroPelicula;
 SELECT * FROM Aparece;
 SELECT * FROM Dirige;
 SELECT * FROM Proyecta;
+
+/*-----------------------------
+    DELETING VALUES
+-----------------------------*/
+
+DELETE FROM CuerpoTecnico;
+DELETE FROM Guionistas;
+DELETE FROM Productores;
+DELETE FROM Actores;
+DELETE FROM Directores;
+DELETE FROM Peliculas;
+DELETE FROM Salas;
+DELETE FROM PaisRodacion;
+DELETE FROM GeneroPelicula;
+DELETE FROM Aparece;
+DELETE FROM Dirige;
+DELETE FROM Proyecta;
 
 /*-----------------------------
     VIEWS
@@ -663,7 +711,7 @@ BEGIN
     -- Buscamos el precio que tiene a la proyección en esa sala
     SELECT precio INTO v_precio
     FROM Proyecta
-    WHERE idSala = p_sala_id AND ROWNUM = 1;  -- La funcion de rownum es asignarle un número secuencial (1, 2, 3, etc.) a cada fila que va resultando de una consulta
+    WHERE idSala = p_sala_id AND ROWNUM <= 1;  -- La funcion de rownum es asignarle un número secuencial (1, 2, 3, etc.) a cada fila que va resultando de una consulta
 
     v_total := v_precio * v_capacidad_estandar;
     RETURN v_total;
@@ -806,7 +854,7 @@ EXCEPTION
     WHEN OTHERS THEN
         ROLLBACK;
         DBMS_OUTPUT.PUT_LINE('ERROR: No se pudo completar la operación debido a un fallo en el sistema.');
-END pr_asignar_actor_elenco;
+END pr_asignar_actor_grupo;
 
 -- Aplicar descuento masivo a precios de proyecciones (Usamos cursores)
 SET SERVEROUTPUT ON;
